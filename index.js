@@ -6,7 +6,7 @@ var through = require('through2');
 var from = require('from2-array');
 var pump = require('pump');
 
-module.exports = GCloudPutDir;
+module.exports = GCloudSiteDir;
 
 /**
  * @param {object}   opts Options
@@ -19,7 +19,7 @@ module.exports = GCloudPutDir;
  *                                   branch prefix
  * @param {Function} cb   Called with (error|undefined) on complete
  */
-function GCloudPutDir (opts, cb) {
+function GCloudSiteDir (opts, cb) {
   if ( typeof cb !== 'function' ) cb = function noop () {}
 
   var keyFilePath = opts.keyFile
