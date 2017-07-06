@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+
+var argv = require('minimist')(process.argv.slice(2));
+
+if ( argv._.length === 0 ) return displayHelp();
+if ( argv.h || argv.help ) return displayHelp();
+
+var options = optionsFromArgv( argv )
+
+if ( typeof options === 'object' ) return require( '../index.js' )( options )
+else return displayHelp();
+
+function displayHelp () {
+  var fs = require( 'fs' )
+  console.log( fs.readFileSync( __dirname + '/cli-help.txt' ).toString() )
+}
+
+function optionsFromArgv ( argv ) {
+  var options = false;
+  if ( argv._.length === 1 ) {
+    
+    options = {
+      directory: argv._[ 0 ]
+    }
+
+    if ( argv.siteName ) options.siteName = argv.siteName;
+    else return false;
+
+    if ( argv.gcloud ) options.keyFile = argv.gcloud;
+    else return false;
+
+    if ( argv.gitSuffix ) options.gitSuffix = true;
+    if ( argv.at ) options.directoryPrefix = argv.at;
+
+    options.directory = replaceHomePath( options.directory )
+    options.keyFile = replaceHomePath( options.keyFile )
+  }
+  return options;
+}
+
+function replaceHomePath ( path ) {
+  if ( path.startsWith( '~' ) ) {
+    path = path.replace( '~', getUserHome() )
+  }
+  return path
+}
+
+function getUserHome() {
+  return process.env[ (process.platform == 'win32')
+      ? 'USERPROFILE'
+      : 'HOME'
+    ];
+}

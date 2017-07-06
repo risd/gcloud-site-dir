@@ -1,0 +1,23 @@
+{
+  "name": "gcloud-site-dir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "gcloud-site-dir": "bin/cli"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^2.6.8",
+    "from2-array": "0.0.4",
+    "gcloud": "^0.37.2",
+    "minimist": "^1.2.0",
+    "pump": "^1.0.2",
+    "readdirp": "^2.1.0",
+    "through2": "^2.0.3"
+  }
+}
