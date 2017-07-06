@@ -22,11 +22,12 @@ module.exports = GCloudSiteDir;
 function GCloudSiteDir (opts, cb) {
   if ( typeof cb !== 'function' ) cb = function noop () {}
 
-  var keyFilePath = opts.keyFile
+  var keyFilePath = replaceHomePath( opts.keyFile )
+  var directory = replaceHomePath( opts.directory )
 
   var options = {
     gcloud:    { projectId: projectIdFromKeyFile( keyFilePath ), keyFilename: keyFilePath },
-    directory: opts.directory,
+    directory: directory,
     bucket:    opts.siteName,
     gitSuffix: opts.gitSuffix,
     dirPrefix: opts.directoryPrefix,
@@ -57,6 +58,20 @@ function projectIdFromKeyFile( keyFile ) {
   } catch ( error ) {
     return error
   }
+}
+
+function replaceHomePath ( path ) {
+  if ( path.startsWith( '~' ) ) {
+    path = path.replace( '~', getUserHome() )
+  }
+  return path
+}
+
+function getUserHome() {
+  return process.env[ (process.platform == 'win32')
+      ? 'USERPROFILE'
+      : 'HOME'
+    ];
 }
 
 function GitSuffix () {

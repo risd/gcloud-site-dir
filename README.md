@@ -20,10 +20,14 @@ To use at the command line: `gcloud-site-dir build --siteName=archive.risd.syste
 
 ### Node Options
 
-**directory** the directory to upload.
+**directory** the directory to upload. Required.
 
-**siteName** the name of the bucket to create and configure as a site on Google Cloud Storage.
+**siteName** the name of the bucket to create and configure as a site on Google Cloud Storage. Required.
 
-**keyFile** the Google Cloud Storage JSON file for the Google Cloud Project.
+**keyFile** the Google Cloud Storage JSON file for the Google Cloud Project. Required.
+
+**directoryPrefix** the prefix to prepend to the path of each file. Optional.
+
+**gitSuffix** if true, will prefix the `siteName` with the current `git` branch.
 
 ### [CLI Options](bin/cli-help.txt)

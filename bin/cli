@@ -37,17 +37,3 @@ function optionsFromArgv ( argv ) {
   }
   return options;
 }
-
-function replaceHomePath ( path ) {
-  if ( path.startsWith( '~' ) ) {
-    path = path.replace( '~', getUserHome() )
-  }
-  return path
-}
-
-function getUserHome() {
-  return process.env[ (process.platform == 'win32')
-      ? 'USERPROFILE'
-      : 'HOME'
-    ];
-}
