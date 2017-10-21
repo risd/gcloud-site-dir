@@ -30,10 +30,8 @@ function optionsFromArgv ( argv ) {
     else return false;
 
     if ( argv.gitSuffix ) options.gitSuffix = true;
+    if ( argv.gitSubdomain ) options.gitSubdomain = true;
     if ( argv.at ) options.directoryPrefix = argv.at;
-
-    options.directory = replaceHomePath( options.directory )
-    options.keyFile = replaceHomePath( options.keyFile )
   }
   return options;
 }

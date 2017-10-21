@@ -3,25 +3,30 @@ gcloud-site-dir directory
     --gcloud
     --at
     --gitSuffix
+    --gitSubdomain
 
-`directory`   The path to the file to upload.
-              Required.
+`directory`     The path to the file to upload.
+                Required.
 
-`siteName`    The name of the bucket to put files into.
-              Required.
+`siteName`      The name of the bucket to put files into.
+                Required.
 
-`gcloud`      Path to JSON file with gcloud credentials.
-              Expects keys: `project_id`, `private_key`,
-              `private_key_id`, `client_email`.
-              Required.
+`gcloud`        Path to JSON file with gcloud credentials.
+                Expects keys: `project_id`, `private_key`,
+                `private_key_id`, `client_email`.
+                Required.
 
-`at`          The relative path to prepend to all
-              of the uploaded files.
-              Optional.
+`at`            The relative path to prepend to all
+                of the uploaded files.
+                Optional.
 
-`gitSuffix`   If this flag is passed, the bucket that is
-              pushed to is suffixed with the current git branch.
-              Optional.
+`gitSuffix`     If this flag is passed, the bucket that is
+                pushed to is suffixed with the current git branch.
+                Optional.
+
+`gitSubdomain`  If this flag is passed, the bucket that is
+                pushed to is suffixed with the current git branch.
+                Optional.
 
 Example
 

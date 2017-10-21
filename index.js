@@ -15,8 +15,10 @@ module.exports = GCloudSiteDir;
  * @param {string}   opts.siteName  Name of site
  * @param {string}   opts.directoryPrefix  Directory path to push the
  *                                         local directory to
- * @param {boolean}  opts.gitSuffix  Should the bucket include a git
- *                                   branch prefix
+ * @param {boolean}  opts.gitSuffix?  Should the bucket include a git
+ *                                    branch suffix
+ * @param {boolean}  opts.gitSubdomain?  Should the bucket include a git
+ *                                       branch subdomain
  * @param {Function} cb   Called with (error|undefined) on complete
  */
 function GCloudSiteDir (opts, cb) {
@@ -30,6 +32,7 @@ function GCloudSiteDir (opts, cb) {
     directory: directory,
     bucket:    opts.siteName,
     gitSuffix: opts.gitSuffix,
+    gitSubdomain: opts.gitSubdomain,
     dirPrefix: opts.directoryPrefix,
   }
 
@@ -42,6 +45,10 @@ function GCloudSiteDir (opts, cb) {
     if (opts.gitSuffix)
         pipeline = pipeline
             .concat([GitSuffix()]);
+
+    if (opts.gitSubdomain)
+        pipeline = pipeline
+          .concat([GitSubdomain()])
 
     pipeline = pipeline
         .concat([
@@ -74,27 +81,54 @@ function getUserHome() {
     ];
 }
 
-function GitSuffix () {
+function gitBranch (callback) {
   var git = require('git-rev');
-  
+
   var branchNameFrom = function (branch) {
     return branch.toLowerCase().replace(/(\s|\/)/g, '-')
   }
 
-  var siteNameFor = function (siteName, branchName) {
+  try {
+    git.branch(function (branch) {
+      callback(undefined, branchNameFrom(branch))
+    })  
+  } catch (noGitError) {
+    callback(undefined, '')
+  }
+  
+}
+
+function gitBranchModifyBucket (nameFn) {
+  return through.obj(modifyBucket);
+
+  function modifyBucket (conf, enc, next) {
+    gitBranch(function(branch) {
+      conf.bucket = nameFn(conf.bucket, branch)
+      next(null, conf)
+    })
+  }
+}
+
+function GitSubdomain () {
+
+  var gitBranchSubdomain = function (siteName, branchName) {
     return (typeof siteName === 'string') && (siteName.length > 0)
       ? [branchName, siteName].join('.')
       : branchName;
   }
 
-  return through.obj(appendBranch);
+  return gitBranchModifyBucket(gitBranchSubdomain);
+}
 
-  function appendBranch (conf, enc, next) {
-    git.branch(function (branch) {
-      conf.bucket = siteNameFor(conf.bucket, branchNameFrom(branch));
-      next(null, conf);
-    });
+function GitSuffix () {
+
+  var gitBranchSuffix = function (siteName, branchName) {
+    return (typeof siteName === 'string') && (siteName.length > 0)
+      ? [siteName, branchName].join('-')
+      : branchName;
   }
+
+  return gitBranchModifyBucket(gitBranchSuffix)
 }
 
 function CreateBucketWith () {
@@ -137,6 +171,7 @@ function CreateBucketWith () {
               'The bucket you tried to create requires domain ownership verification.'
             if ((createError.message !== ALREADY_OWNED_ERROR_MESSAGE) &&
                 (createError.message !== DOMAIN_VERIFICATION_ERROR)) {
+              debug( 'bailing' )
               return bail(createError)
             }
           }
@@ -146,6 +181,7 @@ function CreateBucketWith () {
 
       var addAcl = function (aclOptions) {
         return step(function (conf, nextStep, bail) {
+          debug( 'add-acl' )
           gcs.bucket(conf.bucket).acl.add(aclOptions, function (aclError, aclObject) {
             if (aclError) return bail(aclError)
             else return nextStep(null, conf)
@@ -155,6 +191,7 @@ function CreateBucketWith () {
 
       var addDefaultAcl = function (aclOptions) {
         return step(function (conf, nextStep, bail) {
+          debug( 'add-default' )
           gcs.bucket(conf.bucket).acl.default.add(aclOptions, function (aclError, aclObject) {
             if (aclError) return bail(aclError)
             else return nextStep(null, conf)
@@ -171,6 +208,7 @@ function CreateBucketWith () {
         }
 
         return step(function (conf, nextStep, bail) {
+          debug( 'set-metadata' )
           gcs.bucket(conf.bucket).setMetadata(metadata, nextStep)
         });
       }
