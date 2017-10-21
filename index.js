@@ -112,9 +112,7 @@ function gitBranchModifyBucket (nameFn) {
 function GitSubdomain () {
 
   var gitBranchSubdomain = function (siteName, branchName) {
-    return (typeof siteName === 'string') && (siteName.length > 0)
-      ? [branchName, siteName].join('.')
-      : branchName;
+    return [branchName, siteName].join('.');
   }
 
   return gitBranchModifyBucket(gitBranchSubdomain);
@@ -123,9 +121,12 @@ function GitSubdomain () {
 function GitSuffix () {
 
   var gitBranchSuffix = function (siteName, branchName) {
-    return (typeof siteName === 'string') && (siteName.length > 0)
-      ? [siteName, branchName].join('-')
-      : branchName;
+    var siteNameParts = siteName.split('.')
+    var siteNametoSuffix = siteNameParts.slice(0,1)
+    var domain = siteNameParts.slice(1).join('.')
+
+    var subdomain = [ siteNametoSuffix, branchName ].join('-')
+    return [ subdomain, domain ].join('.')
   }
 
   return gitBranchModifyBucket(gitBranchSuffix)
