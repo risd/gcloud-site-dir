@@ -266,13 +266,13 @@ function UploadFiles () {
         console.log(err.message);
       });
 
-    var prefixer = through.obj(function (row, enc, next) {
+    var prefixer = through.obj(function (row, enc, done) {
         debug(row);
         if (conf.dirPrefix) {
           row.path = [conf.dirPrefix, row.path].join('/');
         }
         this.push(row);
-        next();
+        done();
       });
     
     var uploader = gcloudSync(conf.gcloud, conf.bucket)
@@ -314,7 +314,7 @@ function gcloudSync (gcloudConf, bucket) {
     });
   }
 
-  var uploader = concurrent( { maxConcurrency: 10 }, function (row, enc, next) {
+  var uploader = concurrent.obj( { maxConcurrency: 10 }, function (row, enc, next) {
     syncFile(row.fullPath, row.path, function (error, url) {
       row.url = url;
       next(error, row);
