@@ -3,6 +3,7 @@ var debug = require('debug')('gcloud-put-dir');
 var fs = require('fs');
 var gcloud = require('gcloud');
 var through = require('through2');
+var concurrent = require('through2-concurrent');
 var from = require('from2-array');
 var pump = require('pump');
 
@@ -162,7 +163,18 @@ function CreateBucketWith () {
         });
       }
 
+      var bucketExists = step( function (conf, nextStep, bail) {
+        debug('Does the bucket exist?: ' + conf.bucket)
+        gcs.bucket(conf.bucket).exists(function (existsError, exists) {
+          if ( existsError ) return bail( existsError )
+          conf.bucketExists = exists;
+          return nextStep( null, conf )
+        })
+      } )
+
       var createBucket = step(function (conf, nextStep, bail) {
+        if ( conf.bucketExists === true ) return nextStep(null, conf);
+
         debug('Create bucket: ' + conf.bucket);
         gcs.createBucket(conf.bucket, function (createError, bucket) {
           if (createError) {
@@ -172,7 +184,6 @@ function CreateBucketWith () {
               'The bucket you tried to create requires domain ownership verification.'
             if ((createError.message !== ALREADY_OWNED_ERROR_MESSAGE) &&
                 (createError.message !== DOMAIN_VERIFICATION_ERROR)) {
-              debug( 'bailing' )
               return bail(createError)
             }
           }
@@ -215,6 +226,7 @@ function CreateBucketWith () {
       }
 
       from.obj([conf])
+        .pipe(bucketExists)
         .pipe(createBucket)
         .pipe(addAcl({ entity: 'allUsers', role: gcs.acl.READER_ROLE }))
         .pipe(addDefaultAcl({ entity: 'allUsers', role: gcs.acl.READER_ROLE }))
@@ -302,7 +314,7 @@ function gcloudSync (gcloudConf, bucket) {
     });
   }
 
-  var uploader = through.obj(function (row, enc, next) {
+  var uploader = concurrent( { maxConcurrency: 10 }, function (row, enc, next) {
     syncFile(row.fullPath, row.path, function (error, url) {
       row.url = url;
       next(error, row);
