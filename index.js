@@ -294,10 +294,18 @@ function gcloudSync (gcloudConf, bucket) {
 
   var gcs = gcloud.storage(gcloudConf);
   var gcsBucket = gcs.bucket(bucket);
+  var uploadOptions = function ( destination ) {
+    return {
+      destination: destination,
+      metadata: {
+        cacheControl: 'no-cache'
+      }
+    }
+  }
 
   var syncFile = function (src, dest, next) {
     var attempt = 0;
-    gcsBucket.upload(src, { destination: dest }, function (error, file) {
+    gcsBucket.upload(src, uploadOptions( dest ), function (error, file) {
       var url = [bucket, dest].join('/');
       if (error) {
         attempt += 1
