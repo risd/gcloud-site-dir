@@ -28,6 +28,12 @@ To use at the command line: `gcloud-site-dir build --siteName=archive.risd.syste
 
 **directoryPrefix** the prefix to prepend to the path of each file. Optional.
 
-**gitSuffix** if true, will prefix the `siteName` with the current `git` branch.
+**gitSuffix** if true, will suffix the subdomain `siteName` with the current `git` branch.
+
+**gitSubdomain** if true, will prefix the `siteName` with a subdomain of the current `git` branch
 
 ### [CLI Options](bin/cli-help.txt)
+
+### Testing
+
+`npm test`. Testing is done via [tape](https://www.npmjs.com/package/tape) & configured with [dotenv-safe](https://www.npmjs.com/package/dotenv-safe). The [`.env.test.example`](/.env.test.example) file should be duplicated and modified as `.env.test`. This will get used to run the tests.
