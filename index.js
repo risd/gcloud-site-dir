@@ -6,6 +6,7 @@ var through = require('through2');
 var concurrent = require('through2-concurrent');
 var from = require('from2-array');
 var pump = require('pump');
+var EventEmitter = require('events').EventEmitter
 
 module.exports = GCloudSiteDir;
 
@@ -41,6 +42,8 @@ function GCloudSiteDir (opts, cb) {
 
   var source = from.obj([options]);
 
+  var emitter = new EventEmitter();
+
   var pipeline = [source];
 
     if (opts.gitSuffix)
@@ -54,10 +57,12 @@ function GCloudSiteDir (opts, cb) {
     pipeline = pipeline
         .concat([
             CreateBucketWith(),
-            UploadFiles()
+            UploadFiles( emitter )
         ]);
 
-  return pump.apply(null, pipeline.concat([ cb ]) );
+  pump.apply(null, pipeline.concat([ cb ]) );
+
+  return emitter;
 }
 
 function projectIdFromKeyFile( keyFile ) {
@@ -245,7 +250,7 @@ function CreateBucketWith () {
   }
 }
 
-function UploadFiles () {
+function UploadFiles ( emitter ) {
   var readdirp = require('readdirp');
 
   return through.obj(uploads);
@@ -278,6 +283,7 @@ function UploadFiles () {
     var uploader = gcloudSync(conf.gcloud, conf.bucket)
       .on('data', function (file) {
           debug(file.url);
+          emitter.emit( 'uploaded', file )
       })
       .on('error', debug)
       .on('end', function () {
