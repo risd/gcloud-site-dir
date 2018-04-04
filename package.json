@@ -19,7 +19,7 @@
     "debug": "^2.6.8",
     "from2-array": "0.0.4",
     "gcloud": "^0.37.2",
-    "git-rev": "^0.2.1",
+    "git-state": "^4.0.0",
     "minimist": "^1.2.0",
     "pump": "^1.0.2",
     "readdirp": "2.0.1",
