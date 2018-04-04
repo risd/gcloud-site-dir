@@ -88,14 +88,14 @@ function getUserHome() {
 }
 
 function gitBranch (callback) {
-  var git = require('git-rev');
+  var git = require('git-state');
 
   var branchNameFrom = function (branch) {
     return branch.toLowerCase().replace(/(\s|\/)/g, '-')
   }
 
   try {
-    git.branch(function (branch) {
+    git.branch('.', function (error, branch) {
       callback(undefined, branchNameFrom(branch))
     })  
   } catch (noGitError) {
