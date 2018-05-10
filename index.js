@@ -1,7 +1,7 @@
 var debug = require('debug')('gcloud-put-dir');
 
 var fs = require('fs');
-var gcloud = require('gcloud');
+var gcloud = require('google-cloud');
 var through = require('through2');
 var concurrent = require('through2-concurrent');
 var from = require('from2-array');
@@ -97,11 +97,11 @@ function gitBranch (callback) {
   try {
     git.branch('.', function (error, branch) {
       callback(undefined, branchNameFrom(branch))
-    })  
+    })
   } catch (noGitError) {
     callback(undefined, '')
   }
-  
+
 }
 
 function gitBranchModifyBucket (nameFn) {
@@ -279,7 +279,7 @@ function UploadFiles ( emitter ) {
         this.push(row);
         done();
       });
-    
+
     var uploader = gcloudSync(conf.gcloud, conf.bucket)
       .on('data', function (file) {
           debug(file.url);
