@@ -1,7 +1,7 @@
 var debug = require('debug')('gcloud-put-dir');
 
 var fs = require('fs');
-var gcloud = require('google-cloud');
+var { Storage } = require('@google-cloud/storage');
 var through = require('through2');
 var concurrent = require('through2-concurrent');
 var from = require('from2-array');
@@ -142,7 +142,7 @@ function CreateBucketWith () {
   return through.obj(createBucket);
 
   function createBucket (conf, enc, next) {
-    var gcs = gcloud.storage(conf.gcloud);
+    var gcs = new Storage(conf.gcloud);
     debug(gcs)
     debug(gcs.config)
 
@@ -298,7 +298,7 @@ function UploadFiles ( emitter ) {
 function gcloudSync (gcloudConf, bucket) {
   var max_attempts = 6;
 
-  var gcs = gcloud.storage(gcloudConf);
+  var gcs = new Storage(gcloudConf);
   var gcsBucket = gcs.bucket(bucket);
   var uploadOptions = function ( destination ) {
     return {
