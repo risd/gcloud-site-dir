@@ -13,6 +13,7 @@ else return displayHelp();
 function displayHelp () {
   var fs = require( 'fs' )
   console.log( fs.readFileSync( __dirname + '/cli-help.txt' ).toString() )
+  process.exit( 1 )
 }
 
 function optionsFromArgv ( argv ) {
@@ -33,5 +34,6 @@ function optionsFromArgv ( argv ) {
     if ( argv.gitSubdomain ) options.gitSubdomain = true;
     if ( argv.at ) options.directoryPrefix = argv.at;
   }
+  console.log(options)
   return options;
 }
