@@ -10,6 +10,10 @@ var EventEmitter = require('events').EventEmitter
 
 module.exports = GCloudSiteDir;
 
+function cliUploadCallback ( error ) {
+  return error ? process.exit( 1 ) : process.exit( 0 )
+}
+
 /**
  * @param {object}   opts Options
  * @param {string}   opts.keyFile   Path to Google Project json file
@@ -24,7 +28,7 @@ module.exports = GCloudSiteDir;
  * @param {Function} cb   Called with (error|undefined) on complete
  */
 function GCloudSiteDir (opts, cb) {
-  if ( typeof cb !== 'function' ) cb = function noop () {}
+  if ( typeof cb !== 'function' ) cb = cliUploadCallback
 
   var keyFilePath = replaceHomePath( opts.keyFile )
   var directory = replaceHomePath( opts.directory )

@@ -1,13 +1,7 @@
 var options = require( './env-options.js' )()
+var { spawn } = require( 'child_process' )
 var siteDir = require( '../' )
 var test = require( 'tape' )
-
-// × setup dotenv to read .env.test
-// write the test function
-// run the test
-// commit changes
-// update risd/webhook to reference this
-// close out https://github.com/risd/edu/issues/642
 
 test( 'upload-directory-without-error', function ( t ) {
   t.plan( 2 )
@@ -19,5 +13,21 @@ test( 'upload-directory-without-error', function ( t ) {
 
   emitter.on( 'uploaded', function ( file ) {
     counter += 1;
+  } )
+} )
+
+test( 'CLI-upload-directory-without-error', function ( t ) {
+  t.plan( 1 )
+
+  var uploader = spawn( './bin/cli', [
+    options.directory,
+    '--siteName',
+      options.siteName,
+    '--gcloud',
+      options.keyFile
+  ] )
+
+  uploader.on( 'exit', function ( code ) {
+    t.assert( code === 0, 'CLI exited with status code 0, no errors.' )
   } )
 } )
