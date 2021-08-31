@@ -1,6 +1,6 @@
 {
   "name": "gcloud-site-dir",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -16,18 +16,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "debug": "^2.6.9",
-    "from2-array": "0.0.4",
     "@google-cloud/storage": "^5.14.0",
+    "from2-array": "0.0.4",
     "git-state": "^4.0.0",
     "minimist": "^1.2.5",
     "pump": "^1.0.2",
     "readdirp": "2.0.1",
+    "tape": "^5.3.1",
     "through2": "^2.0.3",
     "through2-concurrent": "^1.1.1"
   },
   "devDependencies": {
-    "dotenv-safe": "^4.0.4",
-    "tape": "^4.8.0"
+    "dotenv-safe": "^4.0.4"
   }
 }
