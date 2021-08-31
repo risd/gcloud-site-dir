@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "debug": "^2.6.8",
+    "debug": "^2.6.9",
     "from2-array": "0.0.4",
     "@google-cloud/storage": "^5.14.0",
     "git-state": "^4.0.0",
