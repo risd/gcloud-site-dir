@@ -7,16 +7,20 @@
     "gcloud-site-dir": "bin/cli"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "DEBUG=* tape test/*.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/risd/gcloud-site-dir"
   },
+  "engines": {
+    "node": ">= 22.13.0",
+    "npm": ">= 11"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/storage": "^6.7.0",
+    "@google-cloud/storage": "^8.2.0",
     "from2-array": "0.0.4",
     "git-state": "^4.0.0",
     "minimist": "^1.2.5",
